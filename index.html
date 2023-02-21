@@ -65,6 +65,27 @@
         #menu a.active:hover {
             background: #3074a4;
         }
+
+        #title {
+            background: #fff;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 3px;
+            font-family: 'Open Sans', sans-serif;
+            width: 280px;
+        }
+
+        #sub-title {
+            background: #fff;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            border-radius: 3px;
+            font-family: 'Open Sans', sans-serif;
+            width: 280px;
+
+        }
     </style>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
 </head>
@@ -72,11 +93,12 @@
 <body>
     <nav id="menu"></nav>
     <div id='map'></div>
-    <div id="title">Crimes in University District 2019</div>
+    <div id="title"><b>Crimes in University District 2019</b></div>
     <div id="sub-title">
       In this repository, I am practicing using tiles from QGIS. The tiles that are generated here
       are from QGIS, and the data that I use are from SPD (Seattle Police Department). I have chose
-      to only look at University District's crimes in 2019.
+      to only look at University District's crimes in 2019. For the base-uw tile, please zoom in towards
+      University District to view the crimes and type.
     </div>
     <script type="text/javascript">
         mapboxgl.accessToken =
@@ -85,7 +107,7 @@
             container: 'map', // container ID
             style: 'mapbox://styles/mapbox/dark-v10',
             zoom: 11, // starting zoom
-            center: [-122.2559435, 47.6002614] // starting center
+            center: [-122.3139, 47.66278] // starting center
         });
 
         map.on('load', () => { //simplifying the function statement: arrow with brackets to define a function
@@ -96,7 +118,7 @@
                     'assets/tile sets 1/{z}/{x}/{y}.png'
                 ],
                 'tileSize': 256,
-                'attribution': 'Map tiles designed by Bo Zhao</a>'
+                'attribution': 'Map tiles designed by Jason Lim</a>'
             });
 
             map.addSource('uw-tiles', {
@@ -105,7 +127,43 @@
                     'assets/tile sets 2/{z}/{x}/{y}.png'
                 ],
                 'tileSize': 256,
-                'attribution': 'Map tiles designed by Bo Zhao'
+                'attribution': 'Map tiles designed by Jason Lim'
+            });
+
+            map.addSource('base-uw-tiles', {
+                'type': 'raster',
+                'tiles': [
+                    'assets/tile sets 3/{z}/{x}/{y}.png'
+                ],
+                'tileSize': 256,
+                'attribution': 'Map tiles designed by Jason Lim'
+            });
+
+            map.addSource('last-tiles', {
+                'type': 'raster',
+                'tiles': [
+                    'assets/tile sets 4/{z}/{x}/{y}.png'
+                ],
+                'tileSize': 256,
+                'attribution': 'Map tiles designed by Jason Lim'
+            });
+
+            map.addLayer({
+                'id': 'uw-theme',
+                'type': 'raster',
+                'layout': {
+                    'visibility': 'none'
+                },
+                'source': 'last-tiles'
+            });
+
+            map.addLayer({
+                'id': 'base-uw',
+                'type': 'raster',
+                'layout': {
+                    'visibility': 'none'
+                },
+                'source': 'base-uw-tiles'
             });
 
             map.addLayer({
@@ -126,18 +184,20 @@
                 'source': 'uw-tiles'
             });
 
+
         });
 
 
         // After the last frame rendered before the map enters an "idle" state.
         map.on('idle', () => {
             // If these two layers were not added to the map, abort
-            if (!map.getLayer('basemap') || !map.getLayer('uw')) {
+            if (!map.getLayer('basemap') || !map.getLayer('uw') ||
+                !map.getLayer('base-uw') || !map.getLayer('uw-theme')) {
                 return;
             }
 
             // Enumerate ids of the layers.
-            const toggleableLayerIds = ['basemap', 'uw'];
+            const toggleableLayerIds = ['basemap', 'uw', 'base-uw', 'uw-theme'];
 
             // Set up the corresponding toggle button for each layer.
             for (const id of toggleableLayerIds) {
