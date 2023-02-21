@@ -20,4 +20,4 @@ Made by Mapbox then imported via QGIS
 ![base-crime map](/imgs/base-crime.png)
 
 ### Map with UW Theme
-![uw-theme Map](/imgs/buw-theme.png)
+![uw-theme Map](/imgs/uw-theme.png)
